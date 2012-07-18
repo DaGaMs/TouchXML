@@ -30,30 +30,69 @@
 //  or implied, of toxicsoftware.com.
 
 #import "CXMLElement_CreationExtensions.h"
+#import "CXMLNode_CreationExtensions.h"
+#import "CXMLDocument.h"
 
 @implementation CXMLElement (CXMLElement_CreationExtensions)
 
+- (id)initWithXMLString:(NSString *)string error:(NSError **)error
+{
+    CXMLDocument *doc = [[CXMLDocument alloc] initWithXMLString:string options:nil error:error];
+    if (!doc)
+    {
+        return nil;
+    }
+    
+    if ((self = [doc rootElement]))
+    {
+        [self detach];
+    }
+    return self;
+}
+
 - (void)addChild:(CXMLNode *)inNode
 {
-NSAssert(inNode->_node->doc == NULL, @"Cannot addChild with a node that already is part of a document. Copy it first!");
-NSAssert(self->_node != NULL, @"_node should not be null");
-NSAssert(inNode->_node != NULL, @"_node should not be null");
-xmlAddChild(self->_node, inNode->_node);
-// now XML element is tracked by document, do not release on dealloc
-inNode->_freeNodeOnRelease = NO;
+    NSAssert(inNode->_node->doc == NULL, @"Cannot addChild with a node that already is part of a document. Copy it first!");
+    NSAssert(self->_node != NULL, @"_node should not be null");
+    NSAssert(inNode->_node != NULL, @"_node should not be null");
+    xmlAddChild(self->_node, inNode->_node);
+    // now XML element is tracked by document, do not release on dealloc
+    inNode->_freeNodeOnRelease = NO;
 }
 
 - (void)addNamespace:(CXMLNode *)inNamespace
 {
-xmlSetNs(self->_node, (xmlNsPtr)inNamespace->_node);
+    xmlSetNs(self->_node, (xmlNsPtr)inNamespace->_node);
 }
 
 - (void)setStringValue:(NSString *)inStringValue
 {
-NSAssert(inStringValue != NULL, @"CXMLElement setStringValue should not be null");
-xmlNodePtr theContentNode = xmlNewText((const xmlChar *)[inStringValue UTF8String]);
-NSAssert(self->_node != NULL, @"_node should not be null");
-xmlAddChild(self->_node, theContentNode);
+    NSAssert(inStringValue != NULL, @"CXMLElement setStringValue should not be null");
+    xmlNodePtr theContentNode = xmlNewText((const xmlChar *)[inStringValue UTF8String]);
+    NSAssert(self->_node != NULL, @"_node should not be null");
+    xmlAddChild(self->_node, theContentNode);
+}
+
+- (void)removeAttributeForName:(NSString *)name
+{
+    CXMLNode *node = [self attributeForName:name];
+    xmlUnlinkNode(node->_node);
+    xmlFree(node->_node);
+}
+
+- (void)setChildren:(NSArray *)children
+{
+    for (CXMLNode *child in [[self children] copy])
+    {
+        BOOL alreadyContained = [self.children containsObject:child];
+        xmlUnlinkNode(child->_node);
+        if (!alreadyContained) xmlFree(child->_node);
+    }
+    
+    for (CXMLNode *child in children)
+    {
+        [self addChild:child];
+    }
 }
 
 @end

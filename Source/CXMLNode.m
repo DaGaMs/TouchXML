@@ -208,8 +208,16 @@ else
 	return([CXMLNode nodeWithLibXMLNode:_node->next freeOnDealloc:NO]);
 }
 
-//- (CXMLNode *)previousNode;
-//- (CXMLNode *)nextNode;
+- (CXMLNode *)nextNode
+{
+    return [self nextSibling];
+}
+
+- (CXMLNode *)previousNode
+{
+    return [self previousSibling];
+}
+
 //- (NSString *)XPath;
 
 - (NSString *)localName

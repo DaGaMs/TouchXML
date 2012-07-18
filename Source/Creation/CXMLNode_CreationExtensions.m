@@ -101,5 +101,11 @@ NSAssert(_node->type == XML_TEXT_NODE, @"CNode setStringValue only implemented f
 xmlNodeSetContent(_node, (const xmlChar *)[inStringValue UTF8String]);
 }
 
+- (void)detach
+{
+    xmlUnlinkNode(self->_node);
+    xmlFree(_node);
+}
+
 @end
 

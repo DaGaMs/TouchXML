@@ -68,8 +68,8 @@ typedef enum {
 - (CXMLNode *)childAtIndex:(NSUInteger)index;
 - (CXMLNode *)previousSibling;
 - (CXMLNode *)nextSibling;
-//- (CXMLNode *)previousNode;
-//- (CXMLNode *)nextNode;
+- (CXMLNode *)previousNode;
+- (CXMLNode *)nextNode;
 //- (NSString *)XPath;
 - (NSString *)localName;
 - (NSString *)prefix;

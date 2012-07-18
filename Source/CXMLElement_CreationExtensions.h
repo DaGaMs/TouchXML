@@ -37,4 +37,6 @@
 
 - (void)addNamespace:(CXMLNode *)inNamespace;
 
+- (void)removeAttributeForName:(NSString *)name;
+- (id)initWithXMLString:(NSString *)string error:(NSError **)error;
 @end

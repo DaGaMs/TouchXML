@@ -52,5 +52,5 @@
 //+ (id)DTDNodeWithXMLString:(NSString *)string;
 
 - (void)setStringValue:(NSString *)inStringValue;
-
+- (void)detach;
 @end
